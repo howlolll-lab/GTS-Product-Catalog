@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+<script>if(matchMedia("(max-width: 800px)").matches)location.replace("mobile.html"+location.search+location.hash);</script>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#151515" />
@@ -33,15 +35,6 @@
     .loading{position:fixed;inset:0;background:#151515;display:grid;place-items:center;z-index:99;transition:opacity .25s}.loading.hide{opacity:0;pointer-events:none}.loader{width:34px;height:34px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
     @media (max-width:800px){.topbar{height:54px;padding:0 10px}.brand span{display:none}.stage{padding:10px 44px}.book{height:min(calc(100vh - 142px),76vh);aspect-ratio:.75/1}.spread{grid-template-columns:1fr}.page{display:none}.page.mobile-current{display:flex!important;grid-column:1!important;width:100%!important;justify-self:stretch!important;border-radius:4px!important}.spine{display:none}.turn-sheet{width:100%}.nav{width:38px;height:52px;border-radius:10px}.nav.prev{left:5px}.nav.next{right:5px}.bottombar{height:58px;gap:10px}.range{width:44vw}.hint{display:none}.drawer{inset:54px auto 58px 0}.backdrop{inset:54px 0 58px}}
     @media (max-width:500px){.brand b{font-size:12px}.icon-btn{height:34px;min-width:34px;border-radius:9px;padding:0 8px}.counter{min-width:74px;font-size:12px}.stage{padding-left:38px;padding-right:38px}}
-    .stage{touch-action:pan-y pinch-zoom}.zoomed .stage{touch-action:auto}
-    .mobile-flip{position:absolute;inset:0;perspective:1400px;pointer-events:none}
-    .mobile-leaf{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:center center;animation:mobileFlip .72s cubic-bezier(.4,0,.2,1) both}
-    .mobile-leaf .turn-face{border-radius:4px;-webkit-backface-visibility:hidden;backface-visibility:hidden;box-shadow:0 12px 24px #0005}
-    .mobile-leaf .turn-face::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0000,#0005);animation:paperShade .72s ease both}
-    @keyframes mobileFlip{0%{transform:rotateY(0)}100%{transform:rotateY(var(--flip-angle))}}
-    @keyframes paperShade{0%,100%{opacity:0}50%{opacity:1}}
-    @media(max-width:800px){.book{height:auto;width:min(100%,calc((100dvh - 152px)*.75));aspect-ratio:.75}.app{height:100dvh}.book-wrap{filter:none}.book{filter:none}.turn-layer{perspective:1400px}}
-    @media(prefers-reduced-motion:reduce){.mobile-leaf,.mobile-leaf .turn-face::after{animation-duration:.01s}}
   </style>
 </head>
 <body>
@@ -73,26 +66,13 @@ function render(){spread.innerHTML=''; book.classList.toggle('single-mode',mobil
  else if(current===0||current===total-1){spread.append(makePage(current,'single'));}
  else{const left=current%2===1?current:current-1;spread.append(makePage(left,'left'));spread.append(makePage(left+1,'right'));}
  counter.textContent=`${current+1} / ${total}`; range.value=current+1; prevBtn.disabled=current===0; nextBtn.disabled=current===total-1; updateThumbs();}
-function mobileTurn(target,dir){
- const layer=document.createElement('div');layer.className='mobile-flip';layer.setAttribute('aria-hidden','true');
- const leaf=document.createElement('div');leaf.className='mobile-leaf';leaf.style.setProperty('--flip-angle',dir>0?'-180deg':'180deg');
- [current,target].forEach((page,n)=>{const face=document.createElement('div');face.className='turn-face '+(n?'turn-back':'turn-front');const im=new Image();im.src=pages[page];im.alt='';face.append(im);leaf.append(face)});
- layer.append(leaf);turnLayer.append(layer);
- spread.style.visibility='hidden';
- let finished=false;const finish=()=>{if(finished)return;finished=true;current=target;render();spread.style.visibility='';layer.remove();busy=false;};
- leaf.addEventListener('animationend',e=>{if(e.target===leaf)finish()});setTimeout(finish,850);
-}
 function turn(dir){if(busy)return; const target=mobile()?current+dir:(dir>0?(current===0?1:Math.min(total-1,(current%2===1?current+2:current+1))):(current===total-1?total-2:Math.max(0,(current%2===1?current-1:current-2)))); if(target===current||target<0||target>=total)return; busy=true;
- if(mobile()){mobileTurn(target,dir);return;}
  const sheet=document.createElement('div');sheet.className=`turn-sheet active ${dir>0?'next':'prev'}`; const a=document.createElement('div'),b=document.createElement('div');a.className='turn-face turn-front';b.className='turn-face turn-back'; const old=dir>0?(mobile()?current:(current===0?0:(current%2===1?current+1:current))):(mobile()?current:(current===total-1?current:(current%2===1?current:current-1))); const neu=dir>0?target:target; [a,b].forEach((x,n)=>{const im=new Image();im.src=pages[n?neu:Math.max(0,Math.min(total-1,old))];x.append(im)});sheet.append(a,b);turnLayer.append(sheet); spread.classList.add('hidden'); setTimeout(()=>{current=target;render();spread.classList.remove('hidden')},300);setTimeout(()=>{sheet.remove();busy=false},650)}
-function go(i){if(busy)return;i=Math.max(0,Math.min(total-1,i));current=i;render()}
+function go(i){i=Math.max(0,Math.min(total-1,i));current=i;render()}
 prevBtn.onclick=()=>turn(-1);nextBtn.onclick=()=>turn(1);range.oninput=e=>go(+e.target.value-1);
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')turn(1);if(e.key==='ArrowLeft'||e.key==='PageUp')turn(-1);if(e.key==='Escape')closeDrawerFn()});
-let gesture=null,suppressClickUntil=0;
-stage.addEventListener('click',e=>{if(Date.now()<suppressClickUntil||e.target.closest('button')||document.body.classList.contains('zoomed'))return;const r=stage.getBoundingClientRect();e.clientX-r.left<r.width/2?turn(-1):turn(1)});
-stage.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0||busy||e.target.closest('button')||document.body.classList.contains('zoomed')){gesture=null;return;}gesture={id:e.pointerId,x:e.clientX,y:e.clientY};});
-stage.addEventListener('pointerup',e=>{if(!gesture||gesture.id!==e.pointerId)return;const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;gesture=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClickUntil=Date.now()+700;turn(dx<0?1:-1);}});
-stage.addEventListener('pointercancel',()=>{gesture=null;});
+stage.addEventListener('click',e=>{if(e.target.closest('button')||document.body.classList.contains('zoomed'))return;const r=stage.getBoundingClientRect(); e.clientX-r.left<r.width/2?turn(-1):turn(1)});
+let x0=null;stage.addEventListener('pointerdown',e=>x0=e.clientX);stage.addEventListener('pointerup',e=>{if(x0===null)return;let dx=e.clientX-x0;x0=null;if(Math.abs(dx)>55)turn(dx<0?1:-1)});
 const drawer=document.getElementById('drawer'),backdrop=document.getElementById('backdrop'),thumbs=document.getElementById('thumbs');
 for(let i=0;i<total;i++){let t=document.createElement('button');t.className='thumb';t.dataset.i=i;t.innerHTML=`<img loading="lazy" src="${pages[i]}" alt="第${i+1}頁縮圖"><span>${i+1}</span>`;t.onclick=()=>{go(i);closeDrawerFn()};thumbs.append(t)}
 function updateThumbs(){document.querySelectorAll('.thumb').forEach(t=>t.classList.toggle('active',+t.dataset.i===current))}

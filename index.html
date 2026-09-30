@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<script>if(matchMedia("(max-width: 800px)").matches)location.replace("mobile.html"+location.search+location.hash);</script>
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <script>if(matchMedia("(max-width: 800px)").matches){const target=new URL("mobile.html",location.href);target.search=location.search;target.searchParams.set("layout","spread-2");target.hash=location.hash;location.replace(target.href);}</script>
   <meta name="theme-color" content="#151515" />
   <title>冠通勝｜產品目錄</title>
   <style>

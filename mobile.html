@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#151515" />
+  <title>冠通勝｜產品目錄</title>
+  <style>
+    :root{--bg:#151515;--panel:#222;--text:#f5f5f5;--muted:#aaa;--accent:#fff;--page-ratio:.75}
+    *{box-sizing:border-box} html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow:hidden}
+    button{font:inherit;color:inherit}
+    .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;min-height:0}
+    .topbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #2a2a2a;background:#151515e8;backdrop-filter:blur(12px);z-index:20}
+    .brand{display:flex;gap:10px;align-items:center;min-width:0}.brand b{font-size:14px;letter-spacing:.08em}.brand span{font-size:12px;color:var(--muted)}
+    .actions{display:flex;gap:8px}.icon-btn{height:38px;min-width:38px;border:1px solid #353535;background:#202020;border-radius:10px;padding:0 11px;cursor:pointer;display:grid;place-items:center}.icon-btn:hover{background:#2a2a2a}.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7}
+    .stage{position:relative;min-height:0;display:grid;place-items:center;padding:18px 78px 12px;perspective:2200px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#333 0,#1c1c1c 40%,#111 100%)}
+    .book-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:min(100%,1500px);height:100%;filter:drop-shadow(0 28px 26px rgba(0,0,0,.45))}
+    .book{position:relative;height:min(calc(100vh - 150px),860px);aspect-ratio:1.5/1;transform-style:preserve-3d;transition:transform .35s ease}
+    .spread{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;justify-content:center;transition:opacity .22s ease,transform .35s ease;transform-style:preserve-3d}
+    .spread.hidden{opacity:0;pointer-events:none;transform:scale(.985)}
+    .page{position:relative;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;backface-visibility:hidden}.page img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;user-select:none;-webkit-user-drag:none}
+    .page.left{border-radius:5px 0 0 5px;box-shadow:inset -18px 0 28px -28px #000}.page.right{border-radius:0 5px 5px 0;box-shadow:inset 18px 0 28px -28px #000}
+    .page.single{grid-column:1 / span 2;width:50%;justify-self:center;border-radius:5px;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+    .spine{position:absolute;left:50%;top:0;height:100%;width:2px;transform:translateX(-50%);background:linear-gradient(#0000,#0006 7%,#0008 50%,#0006 93%,#0000);z-index:8;pointer-events:none}.single-mode .spine{display:none}
+    .turn-layer{position:absolute;inset:0;pointer-events:none;z-index:9;transform-style:preserve-3d}.turn-sheet{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;opacity:0}.turn-sheet.active{opacity:1}.turn-sheet.next{right:0;transform-origin:left center;animation:flipNext .62s cubic-bezier(.55,.03,.25,1) forwards}.turn-sheet.prev{left:0;transform-origin:right center;animation:flipPrev .62s cubic-bezier(.55,.03,.25,1) forwards}.turn-face{position:absolute;inset:0;background:#fff;backface-visibility:hidden;overflow:hidden}.turn-face img{width:100%;height:100%;object-fit:contain}.turn-back{transform:rotateY(180deg)}
+    @keyframes flipNext{0%{transform:rotateY(0)}100%{transform:rotateY(-180deg)}} @keyframes flipPrev{0%{transform:rotateY(0)}100%{transform:rotateY(180deg)}}
+    .edge-shade{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08),inset 0 0 22px rgba(0,0,0,.05)}
+    .nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:60px;border:0;background:#0008;border-radius:14px;cursor:pointer;z-index:12;display:grid;place-items:center;backdrop-filter:blur(8px);transition:.2s}.nav:hover{background:#000c}.nav:disabled{opacity:.2;cursor:default}.nav.prev{left:18px}.nav.next{right:18px}.nav svg{width:24px;height:24px;stroke:white;fill:none;stroke-width:1.8}
+    .bottombar{height:62px;display:flex;align-items:center;justify-content:center;gap:16px;border-top:1px solid #292929;padding:0 14px;background:#171717;z-index:20}.counter{font-variant-numeric:tabular-nums;color:#ddd;font-size:13px;min-width:100px;text-align:center}.range{width:min(440px,52vw);accent-color:white}.hint{font-size:11px;color:#777;white-space:nowrap}
+    .drawer{position:fixed;inset:58px auto 62px 0;width:min(360px,86vw);background:#181818f7;border-right:1px solid #333;z-index:30;transform:translateX(-102%);transition:.28s ease;display:grid;grid-template-rows:auto 1fr}.drawer.open{transform:none}.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid #2d2d2d}.drawer-head b{font-size:13px}.thumbs{overflow:auto;padding:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.thumb{border:1px solid #333;background:#222;padding:5px;border-radius:8px;cursor:pointer;position:relative}.thumb img{width:100%;display:block;border-radius:3px}.thumb span{position:absolute;right:8px;bottom:8px;font-size:10px;background:#000a;border-radius:999px;padding:3px 7px}.thumb.active{outline:2px solid white}
+    .backdrop{position:fixed;inset:58px 0 62px;background:#0008;z-index:29;display:none}.backdrop.show{display:block}
+    .zoomed .book{transform:scale(1.35);cursor:zoom-out}.zoomed .stage{overflow:auto;display:flex;align-items:center;justify-content:center}.zoomed .nav{display:none}
+    .loading{position:fixed;inset:0;background:#151515;display:grid;place-items:center;z-index:99;transition:opacity .25s}.loading.hide{opacity:0;pointer-events:none}.loader{width:34px;height:34px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    @media (max-width:800px){.topbar{height:54px;padding:0 10px}.brand span{display:none}.stage{padding:10px 44px}.spread{grid-template-columns:1fr 1fr}.page{display:flex}.turn-sheet{width:50%}.nav{width:38px;height:52px;border-radius:10px}.nav.prev{left:5px}.nav.next{right:5px}.bottombar{height:58px;gap:10px}.range{width:44vw}.hint{display:none}.drawer{inset:54px auto 58px 0}.backdrop{inset:54px 0 58px}}
+    @media (max-width:500px){.brand b{font-size:12px}.icon-btn{height:34px;min-width:34px;border-radius:9px;padding:0 8px}.counter{min-width:74px;font-size:12px}.stage{padding-left:38px;padding-right:38px}}
+    .stage{touch-action:pan-y pinch-zoom}.zoomed .stage{touch-action:auto}
+    .turn-face{-webkit-backface-visibility:hidden;box-shadow:0 8px 18px #0004}
+    .turn-face::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0000,#0004);pointer-events:none}
+    @media(max-width:800px){.stage{padding:10px 30px}.book{height:auto;width:min(100%,calc((100vh - 142px)*1.5));width:min(100%,calc((100dvh - 142px)*1.5));aspect-ratio:1.5}.app{height:100dvh}.book-wrap{filter:none}.turn-layer{perspective:1400px}.nav{width:28px;height:44px}.nav.prev{left:0}.nav.next{right:0}.counter{min-width:100px}}
+    @media(prefers-reduced-motion:reduce){.turn-sheet{animation-duration:.01s}}
+  </style>
+</head>
+<body>
+<div class="loading" id="loading"><div class="loader"></div></div>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><b>冠通勝｜產品目錄</b><span>2026 Catalog</span></div>
+    <div class="actions">
+      <button class="icon-btn" id="thumbBtn" aria-label="縮圖目錄" title="縮圖目錄"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+      <button class="icon-btn" id="zoomBtn" aria-label="放大" title="放大 / 還原"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5M10.8 7.8v6M7.8 10.8h6"/></svg></button>
+      <button class="icon-btn" id="fullBtn" aria-label="全螢幕" title="全螢幕"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
+    </div>
+  </header>
+  <main class="stage" id="stage">
+    <button class="nav prev" id="prevBtn" aria-label="上一頁"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="book-wrap"><div class="book" id="book"><div class="spread" id="spread"></div><div class="spine"></div><div class="turn-layer" id="turnLayer"></div></div></div>
+    <button class="nav next" id="nextBtn" aria-label="下一頁"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+  </main>
+  <footer class="bottombar"><div class="counter" id="counter">1 / 26</div><input class="range" id="range" type="range" min="1" max="26" value="1" step="1"><div class="hint">← → 翻頁 · 點頁面左右側也可翻</div></footer>
+</div>
+<div class="drawer" id="drawer"><div class="drawer-head"><b>頁面縮圖</b><button class="icon-btn" id="closeDrawer" aria-label="關閉">×</button></div><div class="thumbs" id="thumbs"></div></div><div class="backdrop" id="backdrop"></div>
+<script>
+const total=26; const pages=["assets/page-01.webp","assets/page-02.webp","assets/page-03.webp","assets/page-04.webp","assets/page-05.webp","assets/page-06.webp","assets/page-07.webp","assets/page-08.webp","assets/page-09.webp","assets/page-10.webp","assets/page-11.webp","assets/page-12.webp","assets/page-13.webp","assets/page-14.webp","assets/page-15.webp","assets/page-16.webp","assets/page-17.webp","assets/page-18.webp","assets/page-19.webp","assets/page-20.webp","assets/page-21.webp","assets/page-22.webp","assets/page-23.webp","assets/page-24.webp","assets/page-25.webp","assets/page-26.webp"];
+const spread=document.getElementById('spread'),book=document.getElementById('book'),stage=document.getElementById('stage'),counter=document.getElementById('counter'),range=document.getElementById('range'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),turnLayer=document.getElementById('turnLayer');
+let current=0, busy=false;
+function makePage(i,cls=''){const d=document.createElement('div');d.className='page '+cls; if(i>=0&&i<total){const im=new Image();im.src=pages[i];im.alt=`目錄第 ${i+1} 頁`;d.append(im)} return d}
+function spreadIndexFor(page){if(page===0||page===total-1)return page;return page%2===1?page:page-1}
+function render(){
+ spread.innerHTML='';const single=current===0||current===total-1;book.classList.toggle('single-mode',single);
+ if(single)spread.append(makePage(current,'single'));
+ else{spread.append(makePage(current,'left'));spread.append(makePage(current+1,'right'));}
+ counter.textContent=single?`${current+1} / ${total}`:`${current+1}–${current+2} / ${total}`;
+ range.value=current+1;prevBtn.disabled=current===0;nextBtn.disabled=current===total-1;updateThumbs();
+}
+function turn(dir){
+ if(busy)return;
+ const target=dir>0?(current===0?1:Math.min(total-1,current+2)):(current===total-1?total-3:Math.max(0,current-2));
+ if(target===current)return;busy=true;
+ const sheet=document.createElement('div');sheet.className=`turn-sheet active ${dir>0?'next':'prev'}`;sheet.setAttribute('aria-hidden','true');
+ const old=dir>0?(current===0?0:current+1):current;
+ const next=dir>0?target:(target===0?0:target+1);
+ [old,next].forEach((page,n)=>{const face=document.createElement('div');face.className='turn-face '+(n?'turn-back':'turn-front');const im=new Image();im.src=pages[page];im.alt='';face.append(im);sheet.append(face)});
+ // Keep the stationary page visible under the turning leaf.
+ if(current>0&&current<total-1&&target>0&&target<total-1){spread.innerHTML='';spread.append(makePage(dir>0?current:target,'left'));spread.append(makePage(dir>0?target+1:current+1,'right'));}
+ turnLayer.append(sheet);
+ let done=false;const finish=()=>{if(done)return;done=true;current=target;render();sheet.remove();busy=false;};
+ sheet.addEventListener('animationend',e=>{if(e.target===sheet)finish()});setTimeout(finish,750);
+}
+function go(i){if(busy)return;current=spreadIndexFor(Math.max(0,Math.min(total-1,i)));render()}
+prevBtn.onclick=()=>turn(-1);nextBtn.onclick=()=>turn(1);range.oninput=e=>go(+e.target.value-1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')turn(1);if(e.key==='ArrowLeft'||e.key==='PageUp')turn(-1);if(e.key==='Escape')closeDrawerFn()});
+let gesture=null,suppressClickUntil=0;
+stage.addEventListener('click',e=>{if(Date.now()<suppressClickUntil||e.target.closest('button')||document.body.classList.contains('zoomed'))return;const r=stage.getBoundingClientRect();e.clientX-r.left<r.width/2?turn(-1):turn(1)});
+stage.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0||busy||e.target.closest('button')||document.body.classList.contains('zoomed')){gesture=null;return;}gesture={id:e.pointerId,x:e.clientX,y:e.clientY};});
+stage.addEventListener('pointerup',e=>{if(!gesture||gesture.id!==e.pointerId)return;const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;gesture=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClickUntil=Date.now()+700;turn(dx<0?1:-1);}});
+stage.addEventListener('pointercancel',()=>{gesture=null;});
+const drawer=document.getElementById('drawer'),backdrop=document.getElementById('backdrop'),thumbs=document.getElementById('thumbs');
+for(let i=0;i<total;i++){let t=document.createElement('button');t.className='thumb';t.dataset.i=i;t.innerHTML=`<img loading="lazy" src="${pages[i]}" alt="第${i+1}頁縮圖"><span>${i+1}</span>`;t.onclick=()=>{go(i);closeDrawerFn()};thumbs.append(t)}
+function updateThumbs(){document.querySelectorAll('.thumb').forEach(t=>t.classList.toggle('active',(+t.dataset.i===current||(current>0&&current<total-1&&+t.dataset.i===current+1))))}
+function openDrawer(){drawer.classList.add('open');backdrop.classList.add('show')}function closeDrawerFn(){drawer.classList.remove('open');backdrop.classList.remove('show')}document.getElementById('thumbBtn').onclick=openDrawer;document.getElementById('closeDrawer').onclick=closeDrawerFn;backdrop.onclick=closeDrawerFn;
+document.getElementById('zoomBtn').onclick=()=>document.body.classList.toggle('zoomed');document.getElementById('fullBtn').onclick=async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen?.();else await document.exitFullscreen?.()};
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,120)});
+Promise.all(pages.slice(0,4).map(src=>new Promise(r=>{let i=new Image();i.onload=i.onerror=r;i.src=src}))).then(()=>setTimeout(()=>document.getElementById('loading').classList.add('hide'),180));render();
+</script>
+</body></html>
